@@ -5,6 +5,7 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/st
 import { app } from "../firebase";
 import { updateUserStart,updateUserSuccess,updateUserFailure, deleteUserStart, deleteUserFailre, deleteUserSuccess, signOutUserStart, signOutUserFailre, signOutUserSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import {Link} from 'react-router-dom';
 /*
 allow read;
       allow write:if
@@ -61,29 +62,6 @@ export default function Profile() {
     setFormData({...formData,[e.target.id]:e.target.value});
   }
 
-  /*const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-      //setUpdateSuccess(true);
-    } catch (error) {
-      dispatch(updateUserFailure(error.message));
-    }
-  };*/
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -155,6 +133,9 @@ export default function Profile() {
         <input type="email" placeholder="email" className="border p-3 rounded-lg" defaultValue={currentUser.email} onChange={handleChange}/>
         <input type="password" placeholder="password" className="border p-3 rounded-lg" onChange={handleChange}/>
         <button disabled={loading} className=" bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">{loading?'Loading...':'Update'}</button>
+        <Link className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95" to={"/create-listing"}>
+          Create Listing
+        </Link>
       </form>
 
       <div className="flex justify-between mt-5">
