@@ -21,8 +21,11 @@ export default function Profile() {
   const [file,setFile]=useState(undefined);
   const [filePerc,setFilePerc]=useState(0);
   const [fileUploadError, setFileUploadError]=useState(false);
+  const [showListingError, setShowListingError]=useState(false);
   const [formData,setFormData]=useState({});
   const [updateSuccess,setUpdateSuccess]=useState(false);
+
+  const [userListing,setUserListing]=useState([]);
 
   console.log("File profile avatar",file);
   console.log("FormData to update user",formData);
@@ -119,6 +122,22 @@ export default function Profile() {
     }
   }
 
+  const handleShowListing=async()=>{
+    try {
+      setShowListingError(false);
+      const res=await fetch(`/api/user/listings/${currentUser._id}`);
+      const data= await res.json();
+      if(data.success===false){
+        setShowListingError(true);
+        return;
+      }
+
+      setUserListing(data);
+    } catch(error) {
+      setShowListingError(true);
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -144,7 +163,28 @@ export default function Profile() {
       </div>
 
       <p className="text-red-700 mt-5">{error?error:''}</p>
-      <p className="text-green-700 mt-5">{updateSuccess?'Success':'Not Success'}</p>
+      <p className="text-green-700 mt-5">{updateSuccess?'Success':''}</p>
+      <button onClick={handleShowListing} className="text-green-700 w-full">Show Listing</button>
+      <p className="text-red-700 mt-5">{showListingError? 'Error showing listing':''}</p>
+      {userListing && userListing.length >0 &&
+        <div className="flex flex-col gap-4 ">
+          <h1 className="text-center mt-7 text-2xl font-semibold">Your Listings</h1>
+          {userListing.map((listing)=>
+          <div key={listing._id} className=" border rounded-lg p-3 flex justify-between items-center gap-4">
+            <Link to={`/listings/${listing._id}`}>
+              <img src={listing.imageUrls[0]} alt="listing cover" className="h-16 w-16 object-contain"/>
+            </Link>
+            <Link className="text-slate-700 font-semibold flex-1 hover:underline truncate" to={`/listings/${listing._id}`}>
+              <p >{listing.nameL}</p>
+            </Link>
+            <div className="flex flex-col items-center">
+              <button className="text-red-700 uppercase">Delete</button>
+              <button className="text-green-700 uppercase">Edit</button>
+            </div>
+          </div>
+        )}
+        </div>
+      }
     </div>
   )
 }
