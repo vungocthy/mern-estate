@@ -28,6 +28,7 @@ export default function CreateListing() {
     const [loading,setLoading]=useState(false);
     //console.log("create list file",files);
     console.log("FormData",formData);
+    console.log("Error create listing",error);
     const handleImageSubmit =  (e)=>{
         if(files.length >0 && files.length +formData.imageUrls.length < 7){
             setUploading(true);
@@ -99,7 +100,7 @@ export default function CreateListing() {
         e.preventDefault();
         try{
             if(formData.imageUrls.length<1) return setError('You must upload at least one image');
-            if(formData.regularPrice < formData.discountPrice) return setError('Discount price must be lower than regular price');
+            if(+formData.regularPrice < +formData.discountPrice) return setError('Discount price must be lower than regular price');
             setLoading(false);
             setError(false);
             const res= await fetch('/api/listing/create',{
@@ -174,7 +175,7 @@ export default function CreateListing() {
                         <div className='flex items-center gap-2'>
                             <input onChange={handleChange} value={formData.discountPrice} type='number' id='discountPrice' min='0' max='1000000' required className='p-3 border border-gray-300 rounded-lg'/>
                             <div className='flex flex-col items-center'>
-                                <p>Discounted Price</p>
+                                <p>Discount Price</p>
                                 <span className='text-xs'>$ / month</span>
                             </div>
                         </div>
